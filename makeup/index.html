@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium teas sourced from around the world. Discover our organic, fair-trade tea collection with free shipping on orders over $50.">
+    <title>Leaf & Brew | Premium Artisan Teas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary: #588157;
+            --secondary: #3a5a40;
+            --accent: #a3b18a;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            background-color: #f9f7f3;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3)), 
+                        url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/98650456-1acf-48e7-9992-2d8544c05ebd.png') no-repeat center center/cover;
+            color: white;
+            min-height: 80vh;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .quick-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 350px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            z-index: 100;
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 60vh;
+            }
+            
+            .cart-dropdown {
+                width: 300px;
+                right: -50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/483f4b14-d968-456d-a567-9ff700af42e4.png" alt="Leaf & Brew logo - simple green tea leaf icon" class="h-10" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4ee88034-e998-4560-b9b8-cebac1d3336c.png?text=LB'">
+                <a href="#" class="text-2xl font-bold text-green-800">Leaf & Brew</a>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#products" class="text-gray-700 hover:text-green-800 transition">Teas</a>
+                <a href="#collections" class="text-gray-700 hover:text-green-800 transition">Collections</a>
+                <a href="#about" class="text-gray-700 hover:text-green-800 transition">Our Story</a>
+                <a href="#contact" class="text-gray-700 hover:text-green-800 transition">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4 relative">
+                <button id="search-btn" class="text-gray-600 hover:text-green-800">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button id="cart-btn" class="text-gray-600 hover:text-green-800 relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-green-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                <!-- Cart Dropdown -->
+                <div id="cart-dropdown" class="cart-dropdown p-4">
+                    <h4 class="font-bold text-lg mb-4">Your Cart</h4>
+                    <div id="cart-items">
+                        <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+                    </div>
+                    <div id="cart-total" class="border-t border-gray-200 pt-4 hidden">
+                        <div class="flex justify-between font-bold">
+                            <span>Total:</span>
+                            <span id="total-amount">$0.00</span>
+                        </div>
+                        <a href="#" class="block mt-4 bg-green-800 text-white text-center py-2 rounded hover:bg-green-700 transition">Checkout</a>
+                    </div>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-green-800">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200 px-4 py-3">
+            <a href="#products" class="block py-2 text-gray-700 hover:text-green-800">Teas</a>
+            <a href="#collections" class="block py-2 text-gray-700 hover:text-green-800">Collections</a>
+            <a href="#about" class="block py-2 text-gray-700 hover:text-green-800">Our Story</a>
+            <a href="#contact" class="block py-2 text-gray-700 hover:text-green-800">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero flex items-center">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Sip the World's Finest Teas</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Handcrafted, organic teas sourced directly from ethical growers worldwide.</p>
+            <div class="space-x-4">
+                <a href="#products" class="bg-white text-green-800 px-6 py-3 rounded-full font-medium hover:bg-green-50 transition">Shop Now</a>
+                <a href="#collections" class="border-2 border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-green-800 transition">Collections</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="products" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Our Premium Selection</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Each tea is carefully selected for quality, authenticity, and sustainability.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9fa01f5b-cb35-4527-a1d2-81a1780b33e0.png" alt="Premium green tea leaves in a wooden bowl with bamboo scoop" class="w-full h-64 object-cover">
+                        <button class="quick-view-btn absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-green-800 px-4 py-2 rounded-full font-medium hover:bg-green-50 transition opacity-0 group-hover:opacity-100" data-id="1">Quick View</button>
+                        <span class="absolute top-4 right-4 bg-green-800 text-white text-xs px-2 py-1 rounded">Bestseller</span>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Imperial Green Tea</h3>
+                                <p class="text-sm text-gray-500">From Japan</p>
+                            </div>
+                            <span class="font-bold text-green-800">$14.99</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1 text-gray-700">4.8</span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-gray-500">86 reviews</span>
+                            </div>
+                            <button class="add-to-cart bg-green-800 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition" data-id="1">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ca0a8775-cb27-4df8-b05c-e8a1110d5972.png" alt="Earl Grey tea in a porcelain cup with lavender flowers and lemon slice" class="w-full h-64 object-cover">
+                        <button class="quick-view-btn absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-green-800 px-4 py-2 rounded-full font-medium hover:bg-green-50 transition opacity-0 group-hover:opacity-100" data-id="2">Quick View</button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Earl Grey Supreme</h3>
+                                <p class="text-sm text-gray-500">From England</p>
+                            </div>
+                            <span class="font-bold text-green-800">$12.99</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1 text-gray-700">4.7</span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-gray-500">64 reviews</span>
+                            </div>
+                            <button class="add-to-cart bg-green-800 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition" data-id="2">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/82ac8c0f-f6e3-4fa7-b35b-151eca04f2fa.png" alt="Chai tea blend with cinnamon sticks and cardamom pods on wooden table" class="w-full h-64 object-cover">
+                        <button class="quick-view-btn absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-green-800 px-4 py-2 rounded-full font-medium hover:bg-green-50 transition opacity-0 group-hover:opacity-100" data-id="3">Quick View</button>
+                        <span class="absolute top-4 right-4 bg-amber-600 text-white text-xs px-2 py-1 rounded">New</span>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Masala Chai Blend</h3>
+                                <p class="text-sm text-gray-500">From India</p>
+                            </div>
+                            <span class="font-bold text-green-800">$16.99</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1 text-gray-700">4.9</span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-gray-500">92 reviews</span>
+                            </div>
+                            <button class="add-to-cart bg-green-800 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition" data-id="3">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a619817c-d3b4-42a0-8352-0a4cebc7b127.png" alt="Oolong tea leaves spread out on bamboo tray with Chinese ceramic teapot" class="w-full h-64 object-cover">
+                        <button class="quick-view-btn absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-green-800 px-4 py-2 rounded-full font-medium hover:bg-green-50 transition opacity-0 group-hover:opacity-100" data-id="4">Quick View</button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Mountain Oolong</h3>
+                                <p class="text-sm text-gray-500">From Taiwan</p>
+                            </div>
+                            <span class="font-bold text-green-800">$18.99</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1 text-gray-700">4.6</span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-gray-500">57 reviews</span>
+                            </div>
+                            <button class="add-to-cart bg-green-800 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition" data-id="4">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#" class="inline-block border-2 border-green-800 text-green-800 px-6 py-3 rounded-full font-medium hover:bg-green-800 hover:text-white transition">View All Teas</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tea Categories -->
+    <section id="collections" class="py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Explore Our Collections</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Curated selections for every taste and occasion</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Category 1 -->
+                <div class="relative rounded-lg overflow-hidden group">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/84fb0749-9c6a-41b5-b9c5-de07f71188d1.png" alt="Morning sunrise with various breakfast tea blends and pastries on a wooden table" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold mb-2">Morning Ritual</h3>
+                            <p class="text-white/90">Energizing blends to start your day right</p>
+                            <a href="#" class="inline-block mt-4 text-white border border-white px-4 py-2 rounded hover:bg-white hover:text-green-800 transition">Shop Collection</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category 2 -->
+                <div class="relative rounded-lg overflow-hidden group">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bd33a352-e628-4756-9bd9-a26f8fefcd58.png" alt="Evening tea set with chamomile and relaxing herbal blends by candlelight" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold mb-2">Evening Serenity</h3>
+                            <p class="text-white/90">Calming herbs for peaceful evenings</p>
+                            <a href="#" class="inline-block mt-4 text-white border border-white px-4 py-2 rounded hover:bg-white hover:text-green-800 transition">Shop Collection</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category 3 -->
+                <div class="relative rounded-lg overflow-hidden group">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c434e1e7-5407-44c0-807b-ba22aabdfe99.png" alt="Organic loose leaf tea garden with workers hand-picking tea leaves" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold mb-2">Ethically Sourced</h3>
+                            <p class="text-white/90">Organic & fair-trade certified teas</p>
+                            <a href="#" class="inline-block mt-4 text-white border border-white px-4 py-2 rounded hover:bg-white hover:text-green-800 transition">Shop Collection</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-8 lg:mb-0 lg:pr-12">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a17bcfc9-6c60-4339-8015-999048bd5401.png" alt="Founder of Leaf & Brew holding a cup of tea in a traditional tea garden" class="rounded-lg shadow-lg w-full">
+                </div>
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl font-bold mb-6">Our Tea Journey</h2>
+                    <p class="text-gray-600 mb-4">Founded in 2010, Leaf & Brew began as a passion project between two tea enthusiasts who wanted to share the world's finest teas while supporting sustainable farming practices.</p>
+                    <p class="text-gray-600 mb-6">Today, we partner directly with over 50 small family farms across Asia, Africa, and South America to bring you teas of exceptional quality and character.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-800">50+</div>
+                            <div class="text-gray-500">Tea Varieties</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-800">100%</div>
+                            <div class="text-gray-500">Organic</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-800">5K+</div>
+                            <div class="text-gray-500">Happy Customers</div>
+                        </div>
+                    </div>
+                    <a href="#" class="inline-block bg-green-800 text-white px-6 py-3 rounded-full font-medium hover:bg-green-700 transition">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-green-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">What Tea Lovers Say</h2>
+                <p class="max-w-2xl mx-auto opacity-90">Don't just take our word for it - here's what our customers have to say</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                        <span class="text-sm text-gray-500 ml-2">2 weeks ago</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"The Imperial Green Tea is simply outstanding. The flavor profile is complex yet refreshing, and I love knowing it's sourced ethically."</p>
+                    <div class="flex items-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e32db74c-ff4f-4ad1-be72-a8315eb34591.png" alt="Profile photo of Sarah Johnson, tea enthusiast from Seattle" class="w-10 h-10 rounded-full mr-3" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/27e5cc2f-3e1f-4e53-af5c-fbfedb81a7bf.png?text=SJ'">
+                        <div>
+                            <div class="font-medium">Sarah Johnson</div>
+                            <div class="text-sm text-gray-500">Seattle, WA</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                        <span class="text-sm text-gray-500 ml-2">1 month ago</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"As someone who's tried teas from all over, Leaf & Brew stands out for their quality and customer service. The Chai blend has become my daily ritual."</p>
+                    <div class="flex items-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ec6e8dc3-36e9-4502-8e5c-c4aede4f1713.png" alt="Profile photo of Michael Chen, tea blogger from New York" class="w-10 h-10 rounded-full mr-3" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f1bf5ed1-23c7-40cd-ad20-9bca4873c1b2.png'">
+                        <div>
+                            <div class="font-medium">Michael Chen</div>
+                            <div class="text-sm text-gray-500">New York, NY</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star-half-alt text-yellow-400"></i>
+                        </div>
+                        <span class="text-sm text-gray-500 ml-2">3 months ago</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Their sampler pack was the perfect introduction to premium teas. I've since ordered full sizes of three varieties and gifted several to friends."</p>
+                    <div class="flex items-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/099834f6-15b6-4f1d-a4cc-a3e0ceec98a5.png" alt="Profile photo of Emma Rodriguez, yoga instructor from Austin" class="w-10 h-10 rounded-full mr-3" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9d7f924f-72e1-4887-9736-04b3fa1411ad.png'">
+                        <div>
+                            <div class="font-medium">Emma Rodriguez</div>
+                            <div class="text-sm text-gray-500">Austin, TX</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-green-50 rounded-lg p-8 md:p-12">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-4">Join Our Tea Community</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Sign up for our newsletter and receive 10% off your first order, plus exclusive access to new blends and special offers.</p>
+                </div>
+                <form id="newsletter-form" class="max-w-lg mx-auto">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-800 focus:border-transparent" required>
+                        <button type="submit" class="bg-green-800 text-white px-6 py-3 rounded font-medium hover:bg-green-700 transition">Subscribe</button>
+                    </div>
+                    <div class="mt-2 text-sm text-center text-gray-500">We respect your privacy. Unsubscribe at any time.</div>
+                    <div id="form-message" class="mt-4 hidden text-center"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick View Modal -->
+    <div id="quick-view" class="quick-view">
+        <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button id="close-quick-view" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <img id="qv-image" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/38cb75ca-32ac-403c-bc2b-9fe33d1404c8.png" alt="" class="w-full rounded-lg">
+                    </div>
+                    <div>
+                        <h3 id="qv-title" class="text-2xl font-bold mb-2">Product Title</h3>
+                        <div class="flex items-center mb-4">
+                            <div class="flex items-center mr-2">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1">4.8</span>
+                            </div>
+                            <span class="text-gray-500">|</span>
+                            <a href="#" class="ml-2 text-green-800 hover:underline">32 reviews</a>
+                        </div>
+                        <p id="qv-price" class="text-2xl font-bold text-green-800 mb-4">$14.99</p>
+                        <p id="qv-description" class="text-gray-600 mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="flex items-center border border-gray-300 rounded">
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                                <span class="px-3">1</span>
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100">+</button>
+                            </div>
+                            <button id="qv-add-to-cart" class="bg-green-800 text-white px-6 py-2 rounded font-medium hover:bg-green-700 transition">Add to Cart</button>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="flex items-start mb-2">
+                                <div class="text-green-800 mr-2"><i class="fas fa-truck"></i></div>
+                                <div>
+                                    <div class="font-medium">Free Shipping</div>
+                                    <div class="text-sm text-gray-500">On orders over $50</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-green-800 mr-2"><i class="fas fa-leaf"></i></div>
+                                <div>
+                                    <div class="font-medium">Organic & Fair Trade</div>
+                                    <div class="text-sm text-gray-500">Certified by USDA and Fair Trade USA</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://placehold.co/40x40" alt="Leaf & Brew logo - green tea leaf icon white version" class="h-10" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/541fd6f0-095f-4573-8258-2bf19e3b154b.png'">
+                        <span class="text-2xl font-bold">Leaf & Brew</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Bringing the world's finest teas to your cup since 2010.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Shop</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">All Teas</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Collections</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Gift Sets</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Tea Ware</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Subscriptions</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">About</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Our Story</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Sustainability</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Farm Partners</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Customer Service</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2023 Leaf & Brew. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a3d32285-8a0e-4473-8c23-70453bffa37f.png" alt="Payment methods accepted: Visa, Mastercard, American Express" class="h-8" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6ae461c4-882b-4e18-8b4f-fc9114e8f443.png?text=Payment'">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3974f7ba-d01e-4cc3-96f8-0ecc6cef6ff2.png" alt="Certifications: USDA Organic, Fair Trade USA" class="h-8" onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2a95fd99-3a0c-47ba-a6a6-a10621e76483.png'">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Cart Dropdown Toggle
+        const cartBtn = document.getElementById('cart-btn');
+        const cartDropdown = document.getElementById('cart-dropdown');
+        
+        cartBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cartDropdown.classList.toggle('hidden');
+        });
+        
+        // Close cart dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!cartDropdown.contains(e.target) && e.target !== cartBtn) {
+                cartDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Product Data
+        const products = {
+            1: {
+                title: "Imperial Green Tea",
+                price: 14.99,
+                image: "https://placehold.co/600x400",
+                description: "Our premium Japanese green tea features delicate steamed leaves that produce a vibrant emerald infusion with fresh, grassy notes and a smooth, slightly sweet finish. Perfect for mornings or afternoon refreshment.",
+                origin: "Japan"
+            },
+            2: {
+                title: "Earl Grey Supreme",
+                price: 12.99,
+                image: "https://placehold.co/600x400",
+                description: "A classic British blend with a twist - our Earl Grey combines premium Ceylon black tea with organic bergamot oil and a hint of lavender for a sophisticated, citrusy aroma and full-bodied flavor.",
+                origin: "England"
+            },
+            3: {
+                title: "Masala Chai Blend",
+                price: 16.99,
+                image: "https://placehold.co/600x400",
+                description: "Inspired by traditional Indian recipes, this bold blend combines Assam black tea with cardamom, cinnamon, ginger, cloves, and black pepper for a warming, invigorating cup perfect with milk and sweetener.",
+                origin: "India"
+            },
+            4: {
+                title: "Mountain Oolong",
+                price: 18.99,
+                image: "https://placehold.co/600x400",
+                description: "Hand-rolled leaves from high-elevation Taiwanese gardens produce a complex oolong with floral orchid notes, honey sweetness, and a lingering mineral finish. Multiple steepings reveal evolving flavors.",
+                origin: "Taiwan"
+            }
+        };
+        
+        // Quick View Modal
+        const quickViewBtns = document.querySelectorAll('.quick-view-btn');
+        const quickView = document.getElementById('quick-view');
+        const closeQuickView = document.getElementById('close-quick-view');
+        
+        quickViewBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const productId = btn.getAttribute('data-id');
+                const product = products[productId];
+                
+                document.getElementById('qv-title').textContent = product.title;
+                document.getElementById('qv-price').textContent = `$${product.price.toFixed(2)}`;
+                document.getElementById('qv-image').src = product.image;
+                document.getElementById('qv-image').alt = `${product.title} product detail`;
+                document.getElementById('qv-description').textContent = product.description;
+                document.getElementById('qv-add-to-cart').setAttribute('data-id', productId);
+                
+                quickView.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeQuickView.addEventListener('click', () => {
+            quickView.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Add to Cart Functionality
+        const addToCartBtns = document.querySelectorAll('.add-to-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartTotal = document.getElementById('cart-total');
+        const totalAmount = document.getElementById('total-amount');
+        
+        let cart = [];
+        
+        function updateCart() {
+            // Clear cart items
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+                cartTotal.classList.add('hidden');
+                cartCount.textContent = '0';
+                return;
+            }
+            
+            // Add items to cart dropdown
+            cart.forEach(item => {
+                const product = products[item.id];
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center justify-between py-3 border-b border-gray-200';
+                cartItem.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <img src="${product.image}" alt="${product.title} product thumbnail" class="w-16 h-16 object-cover rounded">
+                        <div>
+                            <div class="font-medium">${product.title}</div>
+                            <div class="text-sm text-gray-500">${product.origin}</div>
+                            <div class="text-sm">Qty: ${item.quantity}</div>
+                        </div>
+                    </div>
+                    <div class="font-medium">$${(product.price * item.quantity).toFixed(2)}</div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            // Update total
+            const total = cart.reduce((sum, item) => sum + (products[item.id].price * item.quantity), 0);
+            totalAmount.textContent = `$${total.toFixed(2)}`;
+            cartTotal.classList.remove('hidden');
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        }
+        
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const productId = btn.getAttribute('data-id');
+                const existingItem = cart.find(item => item.id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: productId,
+                        quantity: 1
+                    });
+                }
+                
+                updateCart();
+                
+                // Show cart dropdown
+                cartDropdown.classList.remove('hidden');
+            });
+        });
+        
+        // Quick View Add to Cart
+        document.getElementById('qv-add-to-cart').addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            quickView.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Show cart dropdown
+            cartDropdown.classList.remove('hidden');
+        });
+        
+        // Newsletter Form
+        const newsletterForm = document.getElementById('newsletter-form');
+        const formMessage = document.getElementById('form-message');
+        
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real app, you would send this to your backend
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Simulate submission
+            formMessage.textContent = "Thank you for subscribing! Check your email for your 10% discount code.";
+            formMessage.className = "mt-4 text-center text-green-800";
+            formMessage.classList.remove('hidden');
+            
+            this.reset();
+            
+            setTimeout(() => {
+                formMessage.classList.add('hidden');
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
+
